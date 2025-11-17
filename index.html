@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP License Key Manager</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-card h3 { color: #667eea; font-size: 2em; margin-bottom: 5px; }
+        .stat-card p { color: #666; font-size: 0.9em; }
+        .content { padding: 30px; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-expired { background: #fee2e2; color: #991b1b; }
+        .actions button {
+            margin-right: 5px;
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+        .alert-error { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #loginPanel {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        #loginPanel h2 { text-align: center; margin-bottom: 30px; color: #667eea; }
+    </style>
+</head>
+<body>
+    <!-- Login Panel -->
+    <div id="loginPanel">
+        <h2>🔐 Admin Login</h2>
+        <div class="form-group">
+            <label>Mật khẩu Admin:</label>
+            <input type="password" id="adminPassword" placeholder="Nhập mật khẩu">
+        </div>
+        <button class="btn btn-primary" style="width: 100%;" onclick="login()">Đăng nhập</button>
+        <div id="loginError" style="color: #ef4444; margin-top: 10px; text-align: center; display: none;">Sai mật khẩu!</div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="container" id="dashboard" style="display: none;">
+        <div class="header">
+            <h1>🔑 VIP License Key Manager</h1>
+            <p>Quản lý License Key cho Sprint Run Bot</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="totalKeys">0</h3>
+                <p>Tổng số Key</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="activeKeys">0</h3>
+                <p>Key Active</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="expiredKeys">0</h3>
+                <p>Key Expired</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="todayKeys">0</h3>
+                <p>Key hôm nay</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="alertBox"></div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('create')">Tạo Key Mới</button>
+                <button class="tab" onclick="switchTab('list')">Danh Sách Key</button>
+                <button class="tab" onclick="switchTab('verify')">Kiểm Tra Key</button>
+            </div>
+
+            <!-- Tab: Tạo Key -->
+            <div class="tab-content active" id="createTab">
+                <h2 style="margin-bottom: 20px;">➕ Tạo Key VIP Mới</h2>
+                <div class="form-group">
+                    <label>Thời hạn:</label>
+                    <select id="duration">
+                        <option value="24">24 giờ</option>
+                        <option value="168">7 ngày</option>
+                        <option value="720">30 ngày</option>
+                        <option value="8760">1 năm</option>
+                        <option value="999999">Vĩnh viễn</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>IP đăng ký (tùy chọn):</label>
+                    <input type="text" id="ipAddress" placeholder="VD: 192.168.1.1 (để trống nếu không giới hạn)">
+                </div>
+                <div class="form-group">
+                    <label>Ghi chú:</label>
+                    <input type="text" id="note" placeholder="VD: Key cho user ABC">
+                </div>
+                <button class="btn btn-primary" onclick="createKey()">🎯 Tạo Key</button>
+            </div>
+
+            <!-- Tab: Danh sách -->
+            <div class="tab-content" id="listTab">
+                <h2 style="margin-bottom: 20px;">📋 Danh Sách Key</h2>
+                <div class="search-box">
+                    <input type="text" id="searchKey" placeholder="🔍 Tìm key..." style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;" oninput="filterKeys()">
+                </div>
+                <table id="keyTable">
+                    <thead>
+                        <tr>
+                            <th>License Key</th>
+                            <th>Trạng thái</th>
+                            <th>Thời gian còn lại</th>
+                            <th>IP</th>
+                            <th>Ghi chú</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keyTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab: Kiểm tra -->
+            <div class="tab-content" id="verifyTab">
+                <h2 style="margin-bottom: 20px;">🔍 Kiểm Tra Key</h2>
+                <div class="form-group">
+                    <label>Nhập License Key:</label>
+                    <input type="text" id="verifyKeyInput" placeholder="Nhập key cần kiểm tra">
+                </div>
+                <button class="btn btn-success" onclick="verifyKey()">Kiểm Tra</button>
+                <div id="verifyResult" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'admin123'; // Thay đổi mật khẩu ở đây
+        const API_URL = '/api/keys'; // Vercel serverless function
+
+        let allKeys = [];
+
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('loginPanel').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadKeys();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+            
+            if (tab === 'list') loadKeys();
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alertBox.innerHTML = '', 5000);
+        }
+
+        async function createKey() {
+            const duration = parseInt(document.getElementById('duration').value);
+            const ip = document.getElementById('ipAddress').value.trim();
+            const note = document.getElementById('note').value.trim();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'create', duration, ip, note })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert(`✅ Key tạo thành công: <strong>${data.key}</strong>`);
+                    document.getElementById('ipAddress').value = '';
+                    document.getElementById('note').value = '';
+                    loadKeys();
+                } else {
+                    showAlert('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ Lỗi kết nối API', 'error');
+            }
+        }
+
+        async function loadKeys() {
+            try {
+                const response = await fetch(`${API_URL}?action=list`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allKeys = data.keys;
+                    displayKeys(allKeys);
+                    updateStats(allKeys);
+                }
+            } catch (error) {
+                showAlert('❌ Không thể tải danh sách key', 'error');
+            }
+        }
+
+        function displayKeys(keys) {
+            const tbody = document.getElementById('keyTableBody');
+            tbody.innerHTML = '';
+
+            keys.forEach(k => {
+                const now = new Date();
+                const expired = new Date(k.expiresAt);
+                const isExpired = now > expired;
+                const timeLeft = isExpired ? 'Hết hạn' : formatTimeLeft(expired - now);
+
+                const row = `
+                    <tr>
+                        <td><code style="background: #f3f4f6; padding: 5px; border-radius: 5px;">${k.key}</code></td>
+                        <td><span class="badge ${isExpired ? 'badge-expired' : 'badge-active'}">${isExpired ? 'Expired' : 'Active'}</span></td>
+                        <td>${timeLeft}</td>
+                        <td>${k.ip || 'Không giới hạn'}</td>
+                        <td>${k.note || '-'}</td>
+                        <td>${new Date(k.createdAt).toLocaleString('vi-VN')}</td>
+                        <td class="actions">
+                            <button class="btn btn-warning" onclick="extendKey('${k.key}')">Gia hạn</button>
+                            <button class="btn btn-danger" onclick="deleteKey('${k.key}')">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function formatTimeLeft(ms) {
+            const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            if (days > 0) return `${days} ngày ${hours} giờ`;
+            return `${hours} giờ`;
+        }
+
+        function updateStats(keys) {
+            const now = new Date();
+            const active = keys.filter(k => new Date(k.expiresAt) > now).length;
+            const expired = keys.length - active;
+            const today = keys.filter(k => {
+                const created = new Date(k.createdAt);
+                return created.toDateString() === now.toDateString();
+            }).length;
+
+            document.getElementById('totalKeys').textContent = keys.length;
+            document.getElementById('activeKeys').textContent = active;
+            document.getElementById('expiredKeys').textContent = expired;
+            document.getElementById('todayKeys').textContent = today;
+        }
+
+        function filterKeys() {
+            const search = document.getElementById('searchKey').value.toLowerCase();
+            const filtered = allKeys.filter(k => 
+                k.key.toLowerCase().includes(search) ||
+                (k.note && k.note.toLowerCase().includes(search)) ||
+                (k.ip && k.ip.toLowerCase().includes(search))
+            );
+            displayKeys(filtered);
+        }
+
+        async function verifyKey() {
+            const key = document.getElementById('verifyKeyInput').value.trim();
+            if (!key) {
+                showAlert('❌ Vui lòng nhập key', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}?action=verify&key=${key}`);
+                const data = await response.json();
+
+                const resultDiv = document.getElementById('verifyResult');
+                if (data.valid) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>✅ Key hợp lệ!</strong><br>
+                            Thời gian còn lại: <strong>${data.timeLeft}</strong><br>
+                            IP: <strong>${data.ip || 'Không giới hạn'}</strong><br>
+                            Ghi chú: <strong>${data.note || '-'}</strong>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-error"><strong>❌ ${data.message}</strong></div>`;
+                }
+            } catch (error) {
+                showAlert('❌ Lỗi kết nối API', 'error');
+            }
+        }
+
+        async function deleteKey(key) {
+            if (!confirm(`Xác nhận xóa key: ${key}?`)) return;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('✅ Đã xóa key');
+                    loadKeys();
+                }
+            } catch (error) {
+                showAlert('❌ Lỗi xóa key', 'error');
+            }
+        }
+
+        async function extendKey(key) {
+            const hours = prompt('Gia hạn thêm bao nhiêu giờ?', '168');
+            if (!hours) return;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key, hours: parseInt(hours) })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('✅ Đã gia hạn key');
+                    loadKeys();
+                }
+            } catch (error) {
+                showAlert('❌ Lỗi gia hạn key', 'error');
+            }
+        }
+    </script>
+</body>
+  </html>
